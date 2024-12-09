@@ -4,6 +4,10 @@ plugins {
 
 val main = "de.jjohannes.robot.R2D2"
 
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(8)
+}
+
 val nxj = layout.buildDirectory.file("${main.substring(main.lastIndexOf(".") + 1)}.nxj")
 val nxtClassesJar = layout.projectDirectory.file("lib/nxt/classes.jar").asFile
 val pcClasspath = files(
@@ -22,6 +26,8 @@ tasks.compileJava {
 val linkNxj = tasks.register<JavaExec>("linkNxj") {
     group = "robot"
 
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+
     inputs.files(tasks.compileJava.map { it.destinationDirectory })
     outputs.file(nxj)
 
@@ -32,6 +38,8 @@ val linkNxj = tasks.register<JavaExec>("linkNxj") {
 
 val uploadNxj = tasks.register<JavaExec>("uploadNxj") {
     group = "robot"
+
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
 
     inputs.files(linkNxj)
 
